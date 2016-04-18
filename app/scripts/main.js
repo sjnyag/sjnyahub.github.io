@@ -43,6 +43,8 @@
       if (typeof registration.update === 'function') {
         registration.update();
       }
+      initialiseState();
+      subscribe();
 
       // updatefound is fired if service-worker.js changes.
       registration.onupdatefound = function() {
@@ -80,4 +82,63 @@
   }
 
   // Your custom JavaScript goes here
+
+  function subscribe() {
+    navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
+      serviceWorkerRegistration.pushManager.subscribe({ userVisibleOnly: true }).then(
+        function(subscription) {
+
+          return sendSubscriptionToServer(subscription);
+        }
+        )
+        .catch(
+          function (e) {
+            if (Notification.permission == 'denied') {
+              console.warn('Permission for Notifications was denied');
+            }
+            else {
+              console.error('Unable to subscribe to push.', e);
+              window.alert(e);
+            }
+          }
+        )
+    })
+  }
+
+  function sendSubscriptionToServer(subscription) {
+    console.log(subscription);
+  }
+
+  function initialiseState() {
+    if (!('showNotification' in ServiceWorkerRegistration.prototype)) {
+      console.warn('プッシュ通知が対応されておりません');
+      return;
+    }
+
+    if (Notification.permission === 'denied') {
+      console.warn('通知をブロックしております');
+      return;
+    }
+
+    if (!('PushManager' in window)) {
+      console.warn('プッシュ通知が対応されておりません');
+      return;
+    }
+
+    navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
+      serviceWorkerRegistration.pushManager.getSubscription().then(
+        function (subscription) {
+
+
+          if (!subscription) {
+            return;
+          }
+
+          // 取得したsubscriptionをServerなどで保存させる処理
+          sendSubscriptionToServer(subscription);
+
+        })
+        .catch(function(err){console.warn('Error during getSubscription()', err); });
+    });
+  }
 })();
