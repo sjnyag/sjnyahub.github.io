@@ -8,7 +8,10 @@ var urlsToCache = [
   "/app/scripts/main.js",
   "/app/index.html",
   "https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css",
-  "/app/images/cinnamon1.jpg"
+  "/app/images/cinnamon1.jpg",
+  "/app/images/cinnamon.png",
+  "/app/images/cappuccino.png",
+  "/app/images/mocha.jpg"
 ];
 self.addEventListener('install', function(event) {
   event.waitUntil(
@@ -38,8 +41,8 @@ self.addEventListener('fetch', function(event) {
 self.addEventListener('push', function(event) {
   self.addEventListener('push', function(event) {
     var title = 'メッセージが届きました';
-    var body  = 'メッセージ内容は、こんにちわ！です';
-    var icon  = '/images/touch/chrome-touch-icon-192x192.png';
+    var body  = 'シナモンです！こんばんわ！';
+    var icon  = '/app/images/touch/chrome-touch-icon-192x192.png';
     var tag   = 'simple-push-demo-notification-tag';
 
     event.waitUntil(
